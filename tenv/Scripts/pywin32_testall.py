@@ -20,7 +20,7 @@ failures = []
 def run_test(script, cmdline_extras):
     dirname, scriptname = os.path.split(script)
     # some tests prefer to be run from their directory.
-    cmd = [sys.executable, "-u", scriptname] + cmdline_extras
+    cmd = [sys.executable, '-u', scriptname] + cmdline_extras
     print("--- Running '%s' ---" % script)
     sys.stdout.flush()
     result = subprocess.run(cmd, check=False, cwd=dirname)
@@ -37,7 +37,7 @@ def find_and_run(possible_locations, extras):
             break
     else:
         raise RuntimeError(
-            "Failed to locate a test script in one of %s" % possible_locations
+            'Failed to locate a test script in one of %s' % possible_locations,
         )
 
 
@@ -47,25 +47,25 @@ def main():
     code_directories = [this_dir] + site_packages
 
     parser = argparse.ArgumentParser(
-        description="A script to trigger tests in all subprojects of PyWin32."
+        description='A script to trigger tests in all subprojects of PyWin32.',
     )
     parser.add_argument(
-        "-no-user-interaction",
+        '-no-user-interaction',
         default=False,
-        action="store_true",
-        help="(This is now the default - use `-user-interaction` to include them)",
+        action='store_true',
+        help='(This is now the default - use `-user-interaction` to include them)',
     )
 
     parser.add_argument(
-        "-user-interaction",
-        action="store_true",
-        help="Include tests which require user interaction",
+        '-user-interaction',
+        action='store_true',
+        help='Include tests which require user interaction',
     )
 
     parser.add_argument(
-        "-skip-adodbapi",
+        '-skip-adodbapi',
         default=False,
-        action="store_true",
+        action='store_true',
         help="Skip the adodbapi tests; useful for CI where there's no provider",
     )
 
@@ -75,31 +75,34 @@ def main():
 
     extras = []
     if args.user_interaction:
-        extras += ["-user-interaction"]
+        extras += ['-user-interaction']
     extras.extend(remains)
     scripts = [
-        "win32/test/testall.py",
-        "Pythonwin/pywin/test/all.py",
+        'win32/test/testall.py',
+        'Pythonwin/pywin/test/all.py',
     ]
     for script in scripts:
-        maybes = [os.path.join(directory, script) for directory in code_directories]
+        maybes = [
+            os.path.join(directory, script)
+            for directory in code_directories
+        ]
         find_and_run(maybes, extras)
 
     # win32com
     maybes = [
-        os.path.join(directory, "win32com", "test", "testall.py")
+        os.path.join(directory, 'win32com', 'test', 'testall.py')
         for directory in [
-            os.path.join(this_dir, "com"),
+            os.path.join(this_dir, 'com'),
         ]
         + site_packages
     ]
-    extras = remains + ["1"]  # only run "level 1" tests in CI
+    extras = remains + ['1']  # only run "level 1" tests in CI
     find_and_run(maybes, extras)
 
     # adodbapi
     if not args.skip_adodbapi:
         maybes = [
-            os.path.join(directory, "adodbapi", "test", "adodbapitest.py")
+            os.path.join(directory, 'adodbapi', 'test', 'adodbapitest.py')
             for directory in code_directories
         ]
         find_and_run(maybes, remains)
@@ -107,18 +110,21 @@ def main():
         # doesn't have a different server to test on) but there is now supposed to be a server out there on the Internet
         # just to run these tests, so try it...
         maybes = [
-            os.path.join(directory, "adodbapi", "test", "test_adodbapi_dbapi20.py")
+            os.path.join(
+                directory, 'adodbapi', 'test',
+                'test_adodbapi_dbapi20.py',
+            )
             for directory in code_directories
         ]
         find_and_run(maybes, remains)
 
     if failures:
-        print("The following scripts failed")
+        print('The following scripts failed')
         for failure in failures:
-            print(">", failure)
+            print('>', failure)
         sys.exit(1)
-    print("All tests passed \\o/")
+    print('All tests passed \\o/')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
