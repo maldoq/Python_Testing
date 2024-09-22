@@ -22,6 +22,7 @@ clubs = loadClubs()
 
 @app.route('/')
 def index():
+    clubs = loadClubs()
     return render_template('index.html',clubs=clubs)
 
 @app.route('/login')
