@@ -30,8 +30,13 @@ def login():
 
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
-    club = [club for club in clubs if club['email'] == request.form['email']][0]
-    return render_template('welcome.html',club=club,competitions=competitions)
+    club = next((club for club in clubs if club['email'] == request.form['email']), None)
+    print(club)
+    if club is not None:
+        return render_template('welcome.html',club=club,competitions=competitions)
+    else:
+        flash("this mail doesn't exists")
+        return render_template('login.html')
 
 
 @app.route('/book/<competition>/<club>')
@@ -51,15 +56,25 @@ def purchasePlaces():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
     if placesRequired >= 1 and placesRequired <= 12:
-        if int(club['points']) >= placesRequired and int(competition['numberOfPlaces']) >= placesRequired:
+        if int(club['points']) >= placesRequired:
             club['points'] = int(club['points'])-placesRequired
-            competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
-            flash('Great-booking complete!')
+            if int(competition['numberOfPlaces']) >= placesRequired:
+                competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
+                flash('Great-booking complete!')
+            else:
+                flash("The place ain't suficient or full. Sorry")
+                return render_template('booking.html',club=club,competition=competition)
         else:
+            flash("Your points ain't suficient. You currently have: "+str(club['points']))
             return render_template('booking.html',club=club,competition=competition)
     elif placesRequired == 0:
+        flash('You must take at least 1 place')
+        return render_template('booking.html',club=club,competition=competition)
+    elif placesRequired < 0:
+        flash('The value cannot be negative')
         return render_template('booking.html',club=club,competition=competition)
     else:
+        flash('the value is bigger than 12, please reduce the value')
         return render_template('booking.html',club=club,competition=competition)
     return render_template('welcome.html', club=club, competitions=competitions)
 
