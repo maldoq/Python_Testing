@@ -1,16 +1,31 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GUDLFT Registration</title>
+    <title>GUDLFT Home</title>
 </head>
 <body>
-    <h1>Welcome to the GUDLFT Registration Portal!</h1>
-    Please enter your secretary email to continue:
-    <form action="showSummary" method="post">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id=""/>
-        <button type="submit">Enter</button>
-    </form>
+    <h1>Welcome to our website</h1>
+    <p>Here is the list of clubs and their informations:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in clubs %}
+          <tr>
+            <td>{{club['name']}}</td>
+            <td>{{club['email']}}</td>
+            <td>{{club['points']}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p>Do you want to login: <a href="{{url_for('login')}}">Login</a></p>
 </body>
 </html>
