@@ -6,6 +6,7 @@ import pytest
 from unittest.mock import patch
 from server import app, loadClubs, loadCompetitions 
 
+# UNIT TESTS
 @pytest.fixture
 def client():
     app.testing = True
@@ -16,7 +17,7 @@ def test_index(client):
     """Test the index page."""
     response = client.get('/')
     assert response.status_code == 200
-    assert b'Welcome to our website' in response.data  # Match with the content in index.html
+    assert b'Welcome to our website' in response.data  
     assert b'Here is the list of clubs' in response.data
 
 def test_index_page_shows_clubs(client):
@@ -97,3 +98,30 @@ def test_purchase_places_insufficient_points(client):
     })
     assert response.status_code == 200
     assert b"Your points ain&#39;t suficient" in response.data
+
+# FUNCTIONAL TESTS
+def test_functional_booking(client):
+    """Simulate the entire booking process with functional tests."""
+    # initial page
+    response = client.get('/login')
+    assert response.status_code == 200
+    assert b'Welcome to the GUDLFT Registration Portal!' in response.data
+
+    # Step 1: Login
+    response = client.post('/showSummary', data={'email': 'admin@irontemple.com'})
+    assert response.status_code == 200
+    assert b'Welcome' in response.data
+
+    # Step 2: Book a competition
+    response = client.get('/book/Spring Festival/Iron Temple')
+    assert response.status_code == 200
+    assert b'Book' in response.data
+
+    # Step 3: Purchase places
+    response = client.post('/purchasePlaces', data={
+        'competition': 'Spring Festival',
+        'club': 'Iron Temple',
+        'places': '2'
+    })
+    assert response.status_code == 200
+    assert b'Great-booking complete!' in response.data
