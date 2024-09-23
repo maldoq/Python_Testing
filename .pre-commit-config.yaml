@@ -5,8 +5,8 @@ repos:
     -   id: trailing-whitespace
     -   id: check-yaml
     -   id: debug-statements
-    -   id: double-quote-string-fixer
     -   id: requirements-txt-fixer
+    -   id: end-of-file-fixer
 -   repo: https://github.com/asottile/setup-cfg-fmt
     rev: v2.5.0
     hooks:
@@ -21,6 +21,15 @@ repos:
     rev: v2.3.1
     hooks:
     -   id: autopep8
+        args:
+          - --in-place  # Modify files directly
+          - --aggressive  # Optional: apply fixes more aggressively
+          - --max-line-length=120  # Optional: enforce line length
+-   repo: https://github.com/psf/black
+    rev: 24.8.0  # Check for the latest version
+    hooks:
+    -   id: black
+        args: ['--line-length=120', '--skip-string-normalization']
 # -   repo: https://github.com/PyCQA/flake8
 #     rev: 7.1.1
 #     hooks:

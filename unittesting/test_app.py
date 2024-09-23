@@ -3,14 +3,17 @@ from unittest.mock import patch
 import pytest
 import sys
 import os
+
 sys.path.insert(
-    0, os.path.abspath(
+    0,
+    os.path.abspath(
         os.path.join(os.path.dirname(__file__), '..'),
     ),
 )
 
 
 # UNIT TESTS
+
 
 @pytest.fixture
 def client():
@@ -59,6 +62,7 @@ def test_login_page(client):
     assert response.status_code == 200
     assert b'Welcome to the GUDLFT Registration Portal!' in response.data
 
+
 # def test_login_post(client):
 #     """Test submitting the login form with a valid email."""
 
@@ -78,7 +82,8 @@ def test_login_page(client):
 def test_show_summary_with_valid_email(client):
     """Test showSummary with a valid email."""
     response = client.post(
-        '/showSummary', data={'email': 'admin@irontemple.com'},
+        '/showSummary',
+        data={'email': 'admin@irontemple.com'},
     )
     assert response.status_code == 200
     assert b'Welcome' in response.data
@@ -87,7 +92,8 @@ def test_show_summary_with_valid_email(client):
 def test_show_summary_with_invalid_email(client):
     """Test showSummary with an invalid email."""
     response = client.post(
-        '/showSummary', data={'email': 'invalidemail@example.com'},
+        '/showSummary',
+        data={'email': 'invalidemail@example.com'},
     )
     assert response.status_code == 200
     assert b'this mail doesn&#39;t exists' in response.data
@@ -96,7 +102,8 @@ def test_show_summary_with_invalid_email(client):
 def test_purchase_places_valid(client):
     """Test purchasing places with valid data."""
     response = client.post(
-        '/purchasePlaces', data={
+        '/purchasePlaces',
+        data={
             'competition': 'Spring Festival',
             'club': 'Simply Lift',
             'places': '5',
@@ -109,7 +116,8 @@ def test_purchase_places_valid(client):
 def test_purchase_places_insufficient_points(client):
     """Test purchasing places with insufficient points."""
     response = client.post(
-        '/purchasePlaces', data={
+        '/purchasePlaces',
+        data={
             'competition': 'Spring Festival',
             'club': 'Iron Temple',
             'places': '11',
@@ -117,6 +125,7 @@ def test_purchase_places_insufficient_points(client):
     )
     assert response.status_code == 200
     assert b'Your points ain&#39;t suficient' in response.data
+
 
 # FUNCTIONAL TESTS
 
@@ -130,7 +139,8 @@ def test_functional_booking(client):
 
     # Step 1: Login
     response = client.post(
-        '/showSummary', data={'email': 'admin@irontemple.com'},
+        '/showSummary',
+        data={'email': 'admin@irontemple.com'},
     )
     assert response.status_code == 200
     assert b'Welcome' in response.data
@@ -142,7 +152,8 @@ def test_functional_booking(client):
 
     # Step 3: Purchase places
     response = client.post(
-        '/purchasePlaces', data={
+        '/purchasePlaces',
+        data={
             'competition': 'Spring Festival',
             'club': 'Iron Temple',
             'places': '2',

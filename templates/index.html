@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GUDLFT Home</title>
-</head>
+    <link rel="stylesheet" href="../static/css/index.css">
 <body>
-    <h1>Welcome to our website</h1>
+    <div class="header">
+        <h1>GUDLFT Home</h1>
+    </div>
+    <div class="body">
+        <h1>Welcome to our website</h1>
     <p>Here is the list of clubs and their informations:</p>
     <table>
         <thead>
@@ -27,5 +31,6 @@
         </tbody>
     </table>
     <p>Do you want to login: <a href="{{url_for('login')}}">Login</a></p>
+    </div>
 </body>
 </html>

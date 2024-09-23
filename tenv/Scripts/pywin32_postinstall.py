@@ -10,7 +10,7 @@ import sysconfig
 
 try:
     import winreg as winreg
-except:
+except BaseException:
     import winreg
 
 # Send output somewhere so it can be found if necessary...
@@ -20,7 +20,8 @@ tee_f = open(
     os.path.join(
         tempfile.gettempdir(),
         'pywin32_postinstall.log',
-    ), 'w',
+    ),
+    'w',
 )
 
 
@@ -91,7 +92,10 @@ except NameError:
     def get_root_hkey():
         try:
             winreg.OpenKey(
-                winreg.HKEY_LOCAL_MACHINE, root_key_name, 0, winreg.KEY_CREATE_SUB_KEY,
+                winreg.HKEY_LOCAL_MACHINE,
+                root_key_name,
+                0,
+                winreg.KEY_CREATE_SUB_KEY,
             )
             return winreg.HKEY_LOCAL_MACHINE
         except OSError:
@@ -106,7 +110,13 @@ except NameError:
     # Create a function with the same signature as create_shortcut provided
     # by bdist_wininst
     def create_shortcut(
-        path, description, filename, arguments='', workdir='', iconpath='', iconindex=0,
+        path,
+        description,
+        filename,
+        arguments='',
+        workdir='',
+        iconpath='',
+        iconindex=0,
     ):
         import pythoncom
         from win32com.shell import shell
@@ -162,11 +172,13 @@ def CopyTo(desc, src, dest):
             full_desc = (
                 'Error %s\n\n'
                 'If you have any Python applications running, '
-                "please close them now\nand select 'Retry'\n\n%s"
-                % (desc, details.strerror)
+                "please close them now\nand select 'Retry'\n\n%s" % (desc, details.strerror)
             )
             rc = win32api.MessageBox(
-                0, full_desc, 'Installation Error', win32con.MB_ABORTRETRYIGNORE,
+                0,
+                full_desc,
+                'Installation Error',
+                win32con.MB_ABORTRETRYIGNORE,
             )
             if rc == win32con.IDABORT:
                 raise
@@ -196,7 +208,9 @@ def LoadSystemModule(lib_dir, modname):
     filename = os.path.join(lib_dir, 'pywin32_system32', filename)
     loader = importlib.machinery.ExtensionFileLoader(modname, filename)
     spec = importlib.machinery.ModuleSpec(
-        name=modname, loader=loader, origin=filename,
+        name=modname,
+        loader=loader,
+        origin=filename,
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -211,8 +225,7 @@ def SetPyKeyVal(key_name, value_name, value):
             winreg.SetValueEx(my_key, value_name, 0, winreg.REG_SZ, value)
             if verbose:
                 print(
-                    '-> %s\\%s[%s]=%r' %
-                    (root_key_name, key_name, value_name, value),
+                    '-> %s\\%s[%s]=%r' % (root_key_name, key_name, value_name, value),
                 )
         finally:
             my_key.Close()
@@ -229,8 +242,7 @@ def UnsetPyKeyVal(key_name, value_name, delete_key=False):
             winreg.DeleteValue(my_key, value_name)
             if verbose:
                 print(
-                    '-> DELETE %s\\%s[%s]' %
-                    (root_key_name, key_name, value_name),
+                    '-> DELETE %s\\%s[%s]' % (root_key_name, key_name, value_name),
                 )
         finally:
             my_key.Close()
@@ -261,7 +273,9 @@ def RegisterCOMObjects(register=True):
         mod = sys.modules[module]
         flags['finalize_register'] = getattr(mod, 'DllRegisterServer', None)
         flags['finalize_unregister'] = getattr(
-            mod, 'DllUnregisterServer', None,
+            mod,
+            'DllUnregisterServer',
+            None,
         )
         klass = getattr(mod, klass_name)
         func(klass, **flags)
@@ -296,7 +310,8 @@ def RegisterPythonwin(register=True, lib_dir=None):
     if lib_dir is None:
         lib_dir = sysconfig.get_paths()['platlib']
     classes_root = get_root_hkey()
-    # Installer executable doesn't seem to pass anything to postinstall script indicating if it's a debug build,
+    # Installer executable doesn't seem to pass anything to postinstall script
+    # indicating if it's a debug build,
     pythonwin_exe = os.path.join(lib_dir, 'Pythonwin', 'Pythonwin.exe')
     pythonwin_edit_command = pythonwin_exe + ' -edit "%1"'
 
@@ -345,7 +360,10 @@ def RegisterPythonwin(register=True, lib_dir=None):
         from win32com.shell import shell, shellcon
 
         shell.SHChangeNotify(
-            shellcon.SHCNE_ASSOCCHANGED, shellcon.SHCNF_IDLIST, None, None,
+            shellcon.SHCNE_ASSOCCHANGED,
+            shellcon.SHCNF_IDLIST,
+            None,
+            None,
         )
 
 
@@ -362,7 +380,8 @@ def get_shortcuts_folder():
 
     try:
         install_group = winreg.QueryValue(
-            get_root_hkey(), root_key_name + '\\InstallPath\\InstallGroup',
+            get_root_hkey(),
+            root_key_name + '\\InstallPath\\InstallGroup',
         )
     except OSError:
         vi = sys.version_info
@@ -406,8 +425,7 @@ def fixup_dbi():
             try:
                 if os.path.isfile(this_dest):
                     print(
-                        "Old dbi '%s' already exists - deleting '%s'"
-                        % (this_dest, this_pyd),
+                        "Old dbi '%s' already exists - deleting '%s'" % (this_dest, this_pyd),
                     )
                     os.remove(this_pyd)
                 else:
@@ -577,7 +595,8 @@ def install(lib_dir):
             # And the docs.
             if chm_file:
                 dst = os.path.join(
-                    fldr, 'Python for Windows Documentation.lnk',
+                    fldr,
+                    'Python for Windows Documentation.lnk',
                 )
                 doc = 'Documentation for the PyWin32 extensions'
                 create_shortcut(chm_file, doc, dst)

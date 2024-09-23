@@ -1,4 +1,5 @@
 """A test runner for pywin32"""
+
 import os
 import site
 import subprocess
@@ -82,10 +83,7 @@ def main():
         'Pythonwin/pywin/test/all.py',
     ]
     for script in scripts:
-        maybes = [
-            os.path.join(directory, script)
-            for directory in code_directories
-        ]
+        maybes = [os.path.join(directory, script) for directory in code_directories]
         find_and_run(maybes, extras)
 
     # win32com
@@ -101,17 +99,16 @@ def main():
 
     # adodbapi
     if not args.skip_adodbapi:
-        maybes = [
-            os.path.join(directory, 'adodbapi', 'test', 'adodbapitest.py')
-            for directory in code_directories
-        ]
+        maybes = [os.path.join(directory, 'adodbapi', 'test', 'adodbapitest.py') for directory in code_directories]
         find_and_run(maybes, remains)
         # This script has a hard-coded sql server name in it, (and markh typically
         # doesn't have a different server to test on) but there is now supposed to be a server out there on the Internet
         # just to run these tests, so try it...
         maybes = [
             os.path.join(
-                directory, 'adodbapi', 'test',
+                directory,
+                'adodbapi',
+                'test',
                 'test_adodbapi_dbapi20.py',
             )
             for directory in code_directories

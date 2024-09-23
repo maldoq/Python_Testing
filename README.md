@@ -76,6 +76,3 @@ Merci !
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
  6. Flake8 Report
-
-
-
