@@ -3,23 +3,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GUDLFT Registration</title>
+    <link rel="stylesheet" href="../static/css/login.css">
 </head>
 <body>
-    <h1>Welcome to the GUDLFT Registration Portal!</h1>
-    Please enter your secretary email to continue:
-    {% with messages = get_flashed_messages()%}
-    <form action="showSummary" method="post">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id=""/>
-        <button type="submit">Enter</button>
-    </form>
-    {% if messages %}
-        <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
-        {% endfor %}
-       </ul>
-    {% endif%}
-    {%endwith%}
+    <div class="present">
+        <h1>Welcome to the GUDLFT Registration Portal!</h1>
+    </div>
+    <div class="form">
+        <h2>Connection</h2>
+        <p>Please enter your secretary email to continue:</p>
+        {% with messages = get_flashed_messages()%}
+        <form action="showSummary" method="post">
+            <div class="label-input">
+                <label for="email">Email</label>
+                <input type="email" name="email" placeholder="Enter our email" id=""/>
+            </div>
+            <button type="submit">Enter</button>
+        </form>
+        {% if messages %}
+            <ul>
+        {% for message in messages %}
+                <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+        {% endif%}
+        {%endwith%}
+    </div>
 </body>
 </html>

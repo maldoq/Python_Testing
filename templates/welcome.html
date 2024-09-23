@@ -3,33 +3,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summary | GUDLFT Registration</title>
+    <link rel="stylesheet" href="../static/css/welcome.css">
 </head>
 <body>
-        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
-
+    <div class="nav">
+        <h2>Welcome, {{club['email']}} </h2>
+        <a href="{{url_for('logout')}}">Logout</a>
+    </div>
     {% with messages = get_flashed_messages()%}
-    {% if messages %}
-        <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
-        {% endfor %}
-       </ul>
-    {% endif%}
-    Points available: {{club['points']}}
-    <h3>Competitions:</h3>
-    <ul>
-        {% for comp in competitions%}
-        <li>
-            {{comp['name']}}<br />
-            Date: {{comp['date']}}</br>
-            Number of Places: {{comp['numberOfPlaces']}}
-            {%if comp['numberOfPlaces']|int >0%}
-            <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
-            {%endif%}
-        </li>
-        <hr />
-        {% endfor %}
-    </ul>
+    <div class="body">
+        {% if messages %}
+            <ul>
+        {% for message in messages %}
+                <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+        {% endif%}
+        <div class="display-points">
+            <h1>Club: {{club['name']}}</h1>
+            <h2>Points available: {{club['points']}}</h2>
+        </div>
+        <hr>
+        <div class="display-compete">
+            <h3>Competitions</h3>
+            <ul>
+                {% for comp in competitions%}
+                <li>
+                    {{comp['name']}}<br />
+                    Date: {{comp['date']}}</br>
+                    Number of Places: {{comp['numberOfPlaces']}}
+                    {%if comp['numberOfPlaces']|int >0%}
+                    <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
+                    {%endif%}
+                </li>
+                <hr />
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
     {%endwith%}
 
 </body>

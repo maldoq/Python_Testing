@@ -1,0 +1,106 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+}
+
+.present{
+    flex: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 50px;
+    background-color: #1a5276;
+    border-radius: 0 30px 30px 0px;
+}
+.present h1{
+    color: #FFF;
+    font-size: 40px;
+}
+
+.form{
+    flex: 3;
+    width: 100%;
+    height: 100%;
+    padding-left: 50px;
+    padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.form h2{
+    font-size: 35px;
+    color: #1a5276;
+    margin-bottom: 50px;
+}
+.form form{
+    width: 80%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+}
+.form form .label-input{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.form form .label-input input{
+    height: 40px;
+    border-radius: 5px;
+    padding-left: 10px;
+    outline: none;
+    border: none;
+    background-color: #f2f3f4;
+    transition: all 0.2s ease-in-out;
+}
+.form form .label-input input:hover{
+    background-color: #f8f9f9;
+}
+.form form .label-input input:focus{
+    background-color: #f8f9f9;
+    border: 1px solid #85929e;
+}
+.form form button{
+    height: 40px;
+    width: 300px;
+    border-radius: 5px;
+    background-color: #1a5276;
+    color: #FFF;
+    border: none;
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+.form form button:hover{
+    box-shadow: 2px 2px 4px #d6dbdf;
+    border-radius: 7px;
+}
+.form ul{
+    display: inline-flex;
+    position: absolute;
+    list-style: none;
+    top: 30;
+    right: 30;
+    width: 250px;
+    height: auto;
+    flex-direction: column;
+    gap: 5px;
+}
+.form ul li{
+    display: inline-flex;
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    padding-left: 10px;
+    align-items: center;
+    background-color: #f1948a;
+    color: #FFF;
+}
