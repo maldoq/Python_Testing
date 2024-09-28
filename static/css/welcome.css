@@ -81,4 +81,27 @@ body{
     flex-direction: column;
     background-color: #f2f3f4;
     border-radius: 10px;
+    gap: 5px;
+}
+.body .display-compete ul li > h2{
+    color: #1a5276;
+    margin-bottom: 30px;
+}
+.body .display-compete ul li > a{
+    text-decoration: none;
+    display: inline-flex;
+    width: 100px;
+    height: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #fff;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 2px 2px 3px #DBDDDD, -2px -2px 3px #FFF;
+    transition: all 0.2s ease-in-out;
+}
+.body .display-compete ul li > a:hover{
+    box-shadow: 3px 3px 5px #DBDDDD, -3px -3px 5px #FFF;
+    border-radius: 7px;
 }

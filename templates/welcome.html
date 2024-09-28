@@ -29,11 +29,13 @@
             <ul>
                 {% for comp in competitions%}
                 <li>
-                    {{comp['name']}}<br />
-                    Date: {{comp['date']}}</br>
-                    Number of Places: {{comp['numberOfPlaces']}}
+                    <h2>{{comp['name']}}</h2>
+                    <p>Date: {{comp['date']}}</p>
+                    <p>Number of Places: <strong>{{comp['numberOfPlaces']}}</strong></p>
                     {%if comp['numberOfPlaces']|int >0%}
                     <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
+                    {%else%}
+                    <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}" aria-disabled="true">Book Places</a>
                     {%endif%}
                 </li>
                 <hr />
@@ -41,8 +43,6 @@
             </ul>
         </div>
     </div>
-
     {%endwith%}
-
 </body>
 </html>
