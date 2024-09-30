@@ -1,5 +1,6 @@
 import json
 from flask import Flask, render_template, request, redirect, flash, url_for
+from datetime import datetime
 
 
 def loadClubs():
@@ -31,15 +32,21 @@ def login():
     return render_template('login.html')
 
 
+def filter_upcoming_competitions(competitions):
+    current_datetime = datetime.now()
+    return [comp for comp in competitions if datetime.strptime(comp["date"], "%Y-%m-%d %H:%M:%S") > current_datetime]
+
+
 @app.route('/showSummary', methods=['POST'])
 def showSummary():
+    upcoming_competitions = filter_upcoming_competitions(competitions)
     club = next(
         (club for club in clubs if club['email'] == request.form['email']),
         None,
     )
     print(club)
     if club is not None:
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=upcoming_competitions)
     else:
         flash("this mail doesn't exists")
         return render_template('login.html')
@@ -73,7 +80,7 @@ def purchasePlaces():
         placesRequired = int(places_required)
 
         # Find the competition and club
-        competition = [c for c in competitions if c['name'] == competition_name][0]
+        competition = [c for c in competitions if (c['name'] == competition_name)][0]
         club = [c for c in clubs if c['name'] == club_name][0]
 
         # Perform the purchase logic
