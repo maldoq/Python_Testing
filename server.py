@@ -74,7 +74,7 @@ def purchasePlaces():
         # If any of the fields are missing, show an error message
         if not competition_name or not club_name or not places_required:
             flash('Missing required form data. Please try again.')
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
 
         # Convert placesRequired to an integer
         placesRequired = int(places_required)
@@ -102,6 +102,7 @@ def purchasePlaces():
         elif placesRequired < 0:
             flash('The value cannot be negative.')
             return render_template('booking.html', club=club, competition=competition)
+
         else:
             flash('The value exceeds 12. Please reduce the value.')
             return render_template('booking.html', club=club, competition=competition)
@@ -110,11 +111,11 @@ def purchasePlaces():
 
     except ValueError:
         flash('Invalid number of places. Please enter a valid number.')
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     except Exception as e:
         flash(f"An error occurred: {e}")
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
 
 # TODO: Add route for points display
