@@ -6,13 +6,19 @@ from datetime import datetime
 def loadClubs():
     with open('clubs.json') as c:
         listOfClubs = json.load(c)['clubs']
-        return listOfClubs
+    return listOfClubs
 
 
 def loadCompetitions():
     with open('competitions.json') as comps:
         listOfCompetitions = json.load(comps)['competitions']
-        return listOfCompetitions
+    return listOfCompetitions
+
+
+def save_data_to_file(data, filename):
+    """Save the updated data to a JSON file."""
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)
 
 
 app = Flask(__name__)
@@ -33,6 +39,7 @@ def login():
 
 
 def filter_upcoming_competitions(competitions):
+    """Return a list of competitions that are upcoming."""
     current_datetime = datetime.now()
     return [comp for comp in competitions if datetime.strptime(comp["date"], "%Y-%m-%d %H:%M:%S") > current_datetime]
 
@@ -44,81 +51,97 @@ def showSummary():
         (club for club in clubs if club['email'] == request.form['email']),
         None,
     )
-    print(club)
-    if club is not None:
+    if club:
         return render_template('welcome.html', club=club, competitions=upcoming_competitions)
     else:
-        flash("this mail doesn't exists")
+        flash("This email doesn't exist")
         return render_template('login.html')
 
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    foundClub = [c for c in clubs if c['name'] == club][0]
-    foundCompetition = [c for c in competitions if c['name'] == competition][0]
-    if foundClub and foundCompetition:
+    try:
+        foundClub = next(c for c in clubs if c['name'] == club)
+        foundCompetition = next(c for c in competitions if c['name'] == competition)
         return render_template('booking.html', club=foundClub, competition=foundCompetition)
-    else:
-        flash('Something went wrong-please try again')
-        return render_template('welcome.html', club=club, competitions=competitions)
+    except StopIteration:
+        flash('Club or competition not found. Please try again.')
+        return redirect(url_for('index'))
 
 
 @app.route('/purchasePlaces', methods=['POST'])
 def purchasePlaces():
     try:
-        # Check if form data contains 'competition', 'club', and 'places'
+        upcoming_competitions = filter_upcoming_competitions(competitions)
         competition_name = request.form.get('competition')
         club_name = request.form.get('club')
         places_required = request.form.get('places')
 
-        # If any of the fields are missing, show an error message
         if not competition_name or not club_name or not places_required:
             flash('Missing required form data. Please try again.')
             return redirect(url_for('login'))
 
-        # Convert placesRequired to an integer
         placesRequired = int(places_required)
 
-        # Find the competition and club
-        competition = [c for c in competitions if (c['name'] == competition_name)][0]
-        club = [c for c in clubs if c['name'] == club_name][0]
+        competition = next(c for c in competitions if c['name'] == competition_name)
+        club = next(c for c in clubs if c['name'] == club_name)
 
-        # Perform the purchase logic
-        if placesRequired >= 1 and placesRequired <= 12:
+        # Get the current number of bookings for the club in this competition
+        already_booked = competition['bookings'].get(club_name, 0)
+
+        # Calculate the total places after the new booking
+        total_booked = already_booked + placesRequired
+
+        # Ensure the total does not exceed 12
+        if total_booked > 12:
+            flash(
+                f'You can only book a maximum of 12 places per competition. You have already booked {already_booked} places.'
+            )
+            return render_template('booking.html', club=club, competition=competition)
+
+        if 1 <= placesRequired <= 12:
             if int(club['points']) >= placesRequired:
-                club['points'] = int(club['points']) - placesRequired
                 if int(competition['numberOfPlaces']) >= placesRequired:
+                    # Update the competition and club data
+                    club['points'] = int(club['points']) - placesRequired
                     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
+
+                    # Update the club's bookings
+                    competition['bookings'][club_name] = total_booked
+
                     flash('Great - booking complete!')
+
+                    # Save changes to the files
+                    # save_data_to_file({'clubs': clubs}, 'clubs.json')
+                    # save_data_to_file({'competitions': competitions}, 'competitions.json')
+
+                    # Redirect to welcome.html after booking
+                    return render_template('welcome.html', club=club, competitions=upcoming_competitions)
                 else:
                     flash('Not enough places available. Please try again.')
-                    return render_template('booking.html', club=club, competition=competition)
             else:
-                flash('Insufficient points. You currently have: ' + str(club['points']))
-                return render_template('booking.html', club=club, competition=competition)
-        elif placesRequired == 0:
-            flash('You must book at least 1 place.')
-            return render_template('booking.html', club=club, competition=competition)
-        elif placesRequired < 0:
-            flash('The value cannot be negative.')
-            return render_template('booking.html', club=club, competition=competition)
-
+                flash(f'Insufficient points. You currently have: {club["points"]}')
         else:
-            flash('The value exceeds 12. Please reduce the value.')
-            return render_template('booking.html', club=club, competition=competition)
+            if placesRequired == 0:
+                flash('You must book at least 1 place.')
+            elif placesRequired < 0:
+                flash('The value cannot be negative.')
+            else:
+                flash('The value exceeds 12. Please reduce the value.')
 
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('booking.html', club=club, competition=competition)
 
     except ValueError:
         flash('Invalid number of places. Please enter a valid number.')
         return redirect(url_for('login'))
 
+    except StopIteration:
+        flash('Club or competition not found. Please try again.')
+        return redirect(url_for('index'))
+
     except Exception as e:
         flash(f"An error occurred: {e}")
         return redirect(url_for('login'))
-
-
-# TODO: Add route for points display
 
 
 @app.route('/logout')
