@@ -12,38 +12,153 @@ sys.path.insert(
 
 
 def test_full_booking_flow(client):
-    """Integrated test simulating the full flow from login to booking."""
+    """Test de toutes les fonctionnalités avec un club en manque de points"""
 
-    # Step 1: Load the login page
     login_page_response = client.get('/login')
     assert login_page_response.status_code == 200
     assert b'Welcome to the GUDLFT Registration Portal!' in login_page_response.data
 
-    # Step 2: Submit login form with valid email
     login_response = client.post('/showSummary', data={'email': 'admin@irontemple.com'})
     assert login_response.status_code == 200
-    assert b'Welcome' in login_response.data  # Ensure the user is greeted after login
+    assert b'Welcome' in login_response.data
 
-    # Step 3: Go to the booking page for a competition
-    booking_page_response = client.get('/book/Spring Festival/Iron Temple')
+    booking_page_response = client.get('/book/Fall Classic/Iron Temple')
     assert booking_page_response.status_code == 200
-    assert b'Book' in booking_page_response.data  # Check if booking options are shown
+    assert b'Book' in booking_page_response.data
 
-    # Step 4: Submit a valid booking request
     booking_response = client.post(
         '/purchasePlaces',
         data={
-            'competition': 'Spring Festival',
+            'competition': 'Fall Classic',
             'club': 'Iron Temple',
             'places': '2',
         },
     )
     assert booking_response.status_code == 200
-    assert b'Great - booking complete!' in booking_response.data  # Confirm successful booking
+    assert b'Great - booking complete!' in booking_response.data
 
-    # Step 5: Check the club points after booking (mocked or from actual data)
+    booking_response = client.post(
+        '/purchasePlaces',
+        data={
+            'competition': 'Fall Classic',
+            'club': 'Iron Temple',
+            'places': '2',
+        },
+    )
+    assert booking_response.status_code == 200
+    assert b'Great - booking complete!' in booking_response.data
+
+    booking_response = client.post(
+        '/purchasePlaces',
+        data={
+            'competition': 'Fall Classic',
+            'club': 'Iron Temple',
+            'places': '2',
+        },
+    )
+    assert booking_response.status_code == 200
+    assert b'Insufficient points.' in booking_response.data
+
     summary_response = client.post('/showSummary', data={'email': 'admin@irontemple.com'})
     assert summary_response.status_code == 200
     assert b'Welcome' in summary_response.data
     assert b'Iron Temple' in summary_response.data  # Confirm the correct club is shown
+
+
+def test_full_booking_flow_2(client):
+    """Test de toutes les fonctionnalités avec une competition en manque de place"""
+
+    login_page_response = client.get('/login')
+    assert login_page_response.status_code == 200
+    assert b'Welcome to the GUDLFT Registration Portal!' in login_page_response.data
+
+    login_response = client.post('/showSummary', data={'email': 'john@simplylift.co'})
+    assert login_response.status_code == 200
+    assert b'Welcome' in login_response.data
+
+    booking_page_response = client.get('/book/Fall Classic/Simply Lift')
+    assert booking_page_response.status_code == 200
+    assert b'Book' in booking_page_response.data
+
+    booking_response = client.post(
+        '/purchasePlaces',
+        data={
+            'competition': 'Fall Classic',
+            'club': 'Simply Lift',
+            'places': '5',
+        },
+    )
+    assert booking_response.status_code == 200
+    assert b'Great - booking complete!' in booking_response.data
+
+    booking_response = client.post(
+        '/purchasePlaces',
+        data={
+            'competition': 'Fall Classic',
+            'club': 'Simply Lift',
+            'places': '5',
+        },
+    )
+    assert booking_response.status_code == 200
+    assert b'Not enough places available.' in booking_response.data
+
+    booking_response = client.post(
+        '/purchasePlaces',
+        data={
+            'competition': 'Spring Festival',
+            'club': 'Simply Lift',
+            'places': '5',
+        },
+    )
+    assert booking_response.status_code == 200
+    assert b'Great - booking complete!' in booking_response.data
+
+    summary_response = client.post('/showSummary', data={'email': 'admin@irontemple.com'})
+    assert summary_response.status_code == 200
+    assert b'Welcome' in summary_response.data
+    assert b'Iron Temple' in summary_response.data  # Confirm the correct club is shown
+    # Here, you might want to check if the points were reduced correctly
+
+
+def test_full_booking_flow_3(client):
+    """Test de toutes les fonctionnalités avec un club voulant avoir plus de 12 places dans une competition"""
+
+    login_page_response = client.get('/login')
+    assert login_page_response.status_code == 200
+    assert b'Welcome to the GUDLFT Registration Portal!' in login_page_response.data
+
+    login_response = client.post('/showSummary', data={'email': 'kate@shelifts.co.uk'})
+    assert login_response.status_code == 200
+    assert b'Welcome' in login_response.data
+
+    booking_page_response = client.get('/book/Spring Festival/She Lifts')
+    assert booking_page_response.status_code == 200
+    assert b'Book' in booking_page_response.data
+
+    booking_response = client.post(
+        '/purchasePlaces',
+        data={
+            'competition': 'Spring Festival',
+            'club': 'She Lifts',
+            'places': '6',
+        },
+    )
+    assert booking_response.status_code == 200
+    assert b'Great - booking complete!' in booking_response.data
+
+    booking_response = client.post(
+        '/purchasePlaces',
+        data={
+            'competition': 'Spring Festival',
+            'club': 'She Lifts',
+            'places': '7',
+        },
+    )
+    assert booking_response.status_code == 200
+    assert b'You can only book a maximum of 12 places per competition.' in booking_response.data
+
+    summary_response = client.post('/showSummary', data={'email': 'kate@shelifts.co.uk'})
+    assert summary_response.status_code == 200
+    assert b'Welcome' in summary_response.data
+    assert b'She Lifts' in summary_response.data  # Confirm the correct club is shown
     # Here, you might want to check if the points were reduced correctly
