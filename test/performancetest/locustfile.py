@@ -11,6 +11,27 @@ class UserBehavior(TaskSet):
         )
 
     @task(2)
+    def show_summary(self):
+        self.client.post(
+            '/showSummary',
+            data={'email': 'john@simplylift.co'},
+        )
+
+    @task(3)
+    def show_summary(self):
+        self.client.post(
+            '/showSummary',
+            data={'email': 'kate@shelifts.co.uk'},
+        )
+
+    @task(4)
+    def show_summary(self):
+        self.client.post(
+            '/showSummary',
+            data={'email': 'dominique@gmail.com'},
+        )
+
+    @task(5)
     def purchase_places(self):
         self.client.post(
             '/purchasePlaces',
