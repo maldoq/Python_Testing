@@ -2,8 +2,6 @@ import sys
 import os
 import json
 import pytest
-from server import app
-from ..config import client
 
 sys.path.insert(
     0,

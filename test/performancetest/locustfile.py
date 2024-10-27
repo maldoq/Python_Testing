@@ -4,21 +4,21 @@ from locust import HttpUser, TaskSet, task, between
 class UserBehavior(TaskSet):
 
     @task(1)
-    def show_summary(self):
+    def show_summary_1(self):
         self.client.post(
             '/showSummary',
             data={'email': 'admin@irontemple.com'},
         )
 
     @task(2)
-    def show_summary(self):
+    def show_summary_2(self):
         self.client.post(
             '/showSummary',
             data={'email': 'john@simplylift.co'},
         )
 
     @task(3)
-    def show_summary(self):
+    def show_summary_3(self):
         self.client.post(
             '/showSummary',
             data={'email': 'kate@shelifts.co.uk'},
